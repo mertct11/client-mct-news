@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-
+import "../Create/create.css";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitLocation, setSubmitLocation] = useState("");
   const history = useHistory();
+  const [errorText, setErrorText] = useState();
 
   const handleSubmit = async (event) => {
+    setErrorText();
     event.preventDefault();
 
     // Burada API'ye gönderilecek olan post işlemini yapabilirsiniz
@@ -24,12 +26,13 @@ const Login = () => {
       );
       const data = await response.json();
 
-      console.log(data);
       if (data?.token) {
         localStorage.setItem("token", data?.token);
         // checkTokenOnServer();
 
         history.push("/create");
+      } else {
+        setErrorText("Invalid email or pass");
       }
       // API'ye başarılı bir şekilde gönderildiğinde yapılacak işlemler
     } catch (error) {
@@ -40,26 +43,62 @@ const Login = () => {
   return (
     <div>
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          flexDirection: "column",
+        }}
+        onSubmit={handleSubmit}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            flexDirection: "column",
+          }}
+        >
           <label>Email:</label>
           <input
+            style={{ width: "80%" }}
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setErrorText();
+            }}
             required
           />
         </div>
-        <div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            flexDirection: "column",
+          }}
+        >
           <label>Password:</label>
           <input
+            style={{ width: "80%" }}
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setErrorText();
+            }}
             required
           />
         </div>
-        <button type="submit">Submit</button>
+        {errorText && <label className="error-text">{errorText}</label>}
+        <button className="login-submit-btn" type="submit">
+          Submit
+        </button>
       </form>
     </div>
   );
