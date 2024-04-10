@@ -63,6 +63,7 @@ const Create = () => {
   };
 
   const handleTextReadTwit = async () => {
+    setParaphraseTwitText();
     const token = localStorage.getItem("token");
 
     try {
