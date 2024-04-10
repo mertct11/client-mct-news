@@ -164,7 +164,7 @@ const Create = () => {
               onClick={() => {
                 handleReadTwit();
               }}
-              disabled={!(twitUrl.length > 0)}
+              disabled={!(twitUrl?.length > 0)}
               type="primary"
             >
               Read a tweet
@@ -184,7 +184,7 @@ const Create = () => {
                 onClick={() => {
                   handleTextReadTwit();
                 }}
-                disabled={!(twitText.length > 0)}
+                disabled={!(twitText?.length > 0)}
                 type="primary"
               >
                 write a Tweet for read
@@ -203,7 +203,7 @@ const Create = () => {
                 onClick={() => {
                   handleMakeTweet();
                 }}
-                disabled={!(paraphraseTwitText.length > 0)}
+                disabled={!(paraphraseTwitText?.length > 0)}
                 type="primary"
               >
                 send TWEET as paraphrased Text
