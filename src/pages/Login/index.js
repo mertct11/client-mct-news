@@ -1,16 +1,23 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import "../Create/create.css";
+import { Input, Button, Tooltip } from "antd";
+import {
+  UserOutlined,
+  InfoCircleOutlined,
+  LockOutlined,
+} from "@ant-design/icons";
+// const { InfoCircleOutlined, UserOutlined } = icons;
+// const { Input, Tooltip } = antd;
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [submitLocation, setSubmitLocation] = useState("");
   const history = useHistory();
   const [errorText, setErrorText] = useState();
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async () => {
     setErrorText();
-    event.preventDefault();
 
     // Burada API'ye gönderilecek olan post işlemini yapabilirsiniz
     try {
@@ -42,7 +49,7 @@ const Login = () => {
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2 style={{ textAlign: "center" }}>Login</h2>
       <form
         style={{
           display: "flex",
@@ -51,7 +58,6 @@ const Login = () => {
           width: "100%",
           flexDirection: "column",
         }}
-        onSubmit={handleSubmit}
       >
         <div
           style={{
@@ -63,15 +69,32 @@ const Login = () => {
           }}
         >
           <label>Email:</label>
-          <input
-            style={{ width: "80%" }}
-            type="email"
+          <Input
+            required
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
               setErrorText();
             }}
-            required
+            style={{ width: "80%" }}
+            type="email"
+            placeholder="Enter your email"
+            prefix={
+              <UserOutlined
+                style={{
+                  color: "rgba(0,0,0,.25)",
+                }}
+              />
+            }
+            suffix={
+              <Tooltip title="Email">
+                <InfoCircleOutlined
+                  style={{
+                    color: "rgba(0,0,0,.45)",
+                  }}
+                />
+              </Tooltip>
+            }
           />
         </div>
         <div
@@ -84,7 +107,7 @@ const Login = () => {
           }}
         >
           <label>Password:</label>
-          <input
+          <Input
             style={{ width: "80%" }}
             type="password"
             value={password}
@@ -93,12 +116,35 @@ const Login = () => {
               setErrorText();
             }}
             required
+            placeholder="Enter your password"
+            prefix={
+              <LockOutlined
+                style={{
+                  color: "rgba(0,0,0,.25)",
+                }}
+              />
+            }
+            suffix={
+              <Tooltip title="password">
+                <InfoCircleOutlined
+                  style={{
+                    color: "rgba(0,0,0,.45)",
+                  }}
+                />
+              </Tooltip>
+            }
           />
         </div>
         {errorText && <label className="error-text">{errorText}</label>}
-        <button className="login-submit-btn" type="submit">
-          Submit
-        </button>
+        <Button
+          onClick={() => {
+            handleSubmit();
+          }}
+          type="primary"
+          className="login-submit-btn"
+        >
+          Login
+        </Button>
       </form>
     </div>
   );

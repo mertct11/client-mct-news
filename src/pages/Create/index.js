@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import "./create.css";
+import { Input, Button } from "antd";
 const Create = () => {
+  const { TextArea } = Input;
+
   const [twitUrl, setTwitUrl] = useState("");
   const [twitText, setTwitText] = useState("");
   const [paraphraseTwitText, setParaphraseTwitText] = useState("");
@@ -135,47 +138,60 @@ const Create = () => {
         </div>
       </header>
       <div>
-        <h3>Read a tweet</h3>
+        <h3 style={{ textAlign: "center" }}>Read a tweet</h3>
         <div className="read-tweet">
-          <div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
             <h4>with url</h4>
-            <input
+            <Input
               disabled={true}
               value={twitUrl}
               onChange={(e) => {
                 //handleReadingTwitChange(e.target.value);
               }}
+              type="text"
+              placeholder="Enter a tweet url"
             />
             {errorText && <label className="error-text">{errorText}</label>}
-            <button
+            <Button
+              style={{ alignSelf: "center" }}
               onClick={() => {
                 handleReadTwit();
               }}
               disabled={!(twitUrl.length > 0)}
+              type="primary"
             >
-              Read a Tweet
-            </button>
+              Read a tweet
+            </Button>
           </div>
           <div className="with-url">
-            <h4>text url</h4>
+            <h4>with giving text</h4>
             <div className="inputs">
-              <textarea
+              <TextArea
                 value={twitText}
                 onChange={(e) => {
                   handleTextReadingTwitChange(e.target.value);
                 }}
               />
               {/* {errorText && <label className="error-text">{errorText}</label>} */}
-              <button
+              <Button
                 onClick={() => {
                   handleTextReadTwit();
                 }}
                 disabled={!(twitText.length > 0)}
+                type="primary"
               >
                 write a Tweet for read
-              </button>
+              </Button>
               <div className="space-line" />
-              <textarea
+              <h4>Result below</h4>
+              <TextArea
                 value={paraphraseTwitText}
                 onChange={(e) => {
                   handleTextTwitReadingChange(e.target.value);
@@ -183,14 +199,15 @@ const Create = () => {
               />
               ///FEATURE ! upload photo
               {/* {errorText && <label className="error-text">{errorText}</label>} */}
-              <button
+              <Button
                 onClick={() => {
                   handleMakeTweet();
                 }}
                 disabled={!(paraphraseTwitText.length > 0)}
+                type="primary"
               >
                 send TWEET as paraphrased Text
-              </button>
+              </Button>
             </div>
           </div>
         </div>
