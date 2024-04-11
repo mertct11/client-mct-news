@@ -46,14 +46,17 @@ const Create = () => {
       const token = localStorage.getItem("token");
 
       try {
-        const response = await fetch("http://localhost:4000/api/readTweet", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: token,
-          },
-          body: JSON.stringify({ twitUrl }),
-        });
+        const response = await fetch(
+          "https://server-mct-news.onrender.com/api/readTweet",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: token,
+            },
+            body: JSON.stringify({ twitUrl }),
+          }
+        );
         const data = await response.json();
 
         console.log({ data });
@@ -77,14 +80,17 @@ const Create = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch("http://localhost:4000/api/readTextTweet", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: token,
-        },
-        body: JSON.stringify({ twitText: twitText }),
-      });
+      const response = await fetch(
+        "https://server-mct-news.onrender.com/api/readTextTweet",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: token,
+          },
+          body: JSON.stringify({ twitText: twitText }),
+        }
+      );
       const data = await response.json();
 
       console.log(data);
@@ -105,14 +111,17 @@ const Create = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch("http://localhost:4000/api/makeTweet", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: token,
-        },
-        body: JSON.stringify({ tweet: choosenText }),
-      });
+      const response = await fetch(
+        "https://server-mct-news.onrender.com/api/makeTweet",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: token,
+          },
+          body: JSON.stringify({ tweet: choosenText }),
+        }
+      );
       const data = await response.json();
 
       if (data?.isSuccess) {
