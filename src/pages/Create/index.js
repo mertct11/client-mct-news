@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import "./create.css";
-import { Input, Button } from "antd";
+import { Input, Button, Checkbox } from "antd";
 const Create = () => {
   const { TextArea } = Input;
 
+  const [isParaphrasingButtonLoading, setIsParaphrasingButtonLoading] =
+    useState(false);
+  const [isSendingTweetLoading, setIsSendingTweetLoading] = useState(false);
+  const [choosenTextId, setChoosenTextId] = useState("");
+  const [choosenText, setChoosenText] = useState("");
   const [twitUrl, setTwitUrl] = useState("");
   const [twitText, setTwitText] = useState("");
-  const [paraphraseTwitText, setParaphraseTwitText] = useState("");
+  const [paraphraseTwitTexts, setParaphraseTwitTexts] = useState("");
   const [errorText, setErrorText] = useState();
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -41,17 +46,14 @@ const Create = () => {
       const token = localStorage.getItem("token");
 
       try {
-        const response = await fetch(
-          "https://server-mct-news.onrender.com/api/readTweet",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              authorization: token,
-            },
-            body: JSON.stringify({ twitUrl }),
-          }
-        );
+        const response = await fetch("http://localhost:4000/api/readTweet", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: token,
+          },
+          body: JSON.stringify({ twitUrl }),
+        });
         const data = await response.json();
 
         console.log({ data });
@@ -61,66 +63,71 @@ const Create = () => {
     }
   };
 
-  const handleTextTwitReadingChange = async (val) => {
-    setParaphraseTwitText(val);
+  const handleTextTwitReadingChange = async (val, key) => {
+    let tmpArr = paraphraseTwitTexts;
+    tmpArr[key] = val;
+    setParaphraseTwitTexts(tmpArr);
+    console.log(tmpArr);
+    setChoosenText(val);
   };
 
   const handleTextReadTwit = async () => {
-    setParaphraseTwitText();
+    setIsParaphrasingButtonLoading(true);
+    setParaphraseTwitTexts();
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch(
-        "https://server-mct-news.onrender.com/api/readTextTweet",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: token,
-          },
-          body: JSON.stringify({ twitText: twitText }),
-        }
-      );
+      const response = await fetch("http://localhost:4000/api/readTextTweet", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+        body: JSON.stringify({ twitText: twitText }),
+      });
       const data = await response.json();
 
       console.log(data);
-      if (data) {
-        setParaphraseTwitText(data?.twitText);
+      if (data && data?.twitTextArr?.length > 0) {
+        setParaphraseTwitTexts(data?.twitTextArr);
       } else {
         setTwitText("");
       }
     } catch (error) {
       console.error("API hatası:", error);
+    } finally {
+      setIsParaphrasingButtonLoading(false);
     }
   };
 
   const handleMakeTweet = async () => {
+    setIsSendingTweetLoading(true);
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch(
-        "https://server-mct-news.onrender.com/api/makeTweet",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: token,
-          },
-          body: JSON.stringify({ tweet: paraphraseTwitText }),
-        }
-      );
+      const response = await fetch("http://localhost:4000/api/makeTweet", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+        body: JSON.stringify({ tweet: choosenText }),
+      });
       const data = await response.json();
 
       if (data?.isSuccess) {
-        setErrorText("TWEEET BASARIYLA GONDERILDI");
+        setErrorText("TWEEET BASARIYLA GONDERILDI, sayfa yenileniyor");
       } else {
         setErrorText("TWEEET GÖNDERİLEMEDİ");
       }
       setTimeout(() => {
         setErrorText();
+        window.location.reload();
       }, 3000);
     } catch (error) {
       console.error("API hatası:", error);
+    } finally {
+      setIsSendingTweetLoading(false);
     }
   };
 
@@ -158,7 +165,6 @@ const Create = () => {
               type="text"
               placeholder="Enter a tweet url"
             />
-            {errorText && <label className="error-text">{errorText}</label>}
             <Button
               style={{ alignSelf: "center" }}
               onClick={() => {
@@ -186,28 +192,57 @@ const Create = () => {
                 }}
                 disabled={!(twitText?.length > 0)}
                 type="primary"
+                loading={isParaphrasingButtonLoading}
               >
                 write a Tweet for read
               </Button>
               <div className="space-line" />
               <h4>Result below</h4>
-              <TextArea
-                value={paraphraseTwitText}
-                onChange={(e) => {
-                  handleTextTwitReadingChange(e.target.value);
-                }}
-              />
+              {paraphraseTwitTexts?.length > 0 &&
+                paraphraseTwitTexts?.map((pTwitText, key) => {
+                  return (
+                    <div
+                      key={key}
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
+                        marginBottom: 20,
+                      }}
+                    >
+                      <Checkbox
+                        checked={choosenTextId === key}
+                        onChange={() => {
+                          setChoosenTextId(key);
+                          setChoosenText(pTwitText);
+                        }}
+                      >
+                        <TextArea
+                          disabled={key !== choosenTextId}
+                          value={pTwitText}
+                          onChange={(e) => {
+                            console.log("sd", e.target.value);
+                            handleTextTwitReadingChange(e.target.value, key);
+                          }}
+                        />
+                      </Checkbox>
+                    </div>
+                  );
+                })}
               ///FEATURE ! upload photo
               {/* {errorText && <label className="error-text">{errorText}</label>} */}
               <Button
                 onClick={() => {
                   handleMakeTweet();
                 }}
-                disabled={!(paraphraseTwitText?.length > 0)}
+                disabled={!(choosenText?.length > 0)}
                 type="primary"
+                loading={isSendingTweetLoading}
               >
                 send TWEET as paraphrased Text
               </Button>
+              {errorText && <label className="error-text">{errorText}</label>}
             </div>
           </div>
         </div>

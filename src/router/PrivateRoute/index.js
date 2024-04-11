@@ -10,16 +10,13 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
       const token = localStorage.getItem("token");
 
       try {
-        const response = await fetch(
-          "https://server-mct-news.onrender.com/api/checkToken",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ token }),
-          }
-        );
+        const response = await fetch("http://localhost:4000/api/checkToken", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token }),
+        });
         const data = await response.json();
 
         console.log("Token check response:", data); // Add this line to check response

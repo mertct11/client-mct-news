@@ -11,6 +11,7 @@ import {
 // const { Input, Tooltip } = antd;
 
 const Login = () => {
+  const [isLoadingLoginButton, setIsLoadingLoginButton] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const history = useHistory();
@@ -18,19 +19,17 @@ const Login = () => {
 
   const handleSubmit = async () => {
     setErrorText();
+    setIsLoadingLoginButton(true);
 
     // Burada API'ye gönderilecek olan post işlemini yapabilirsiniz
     try {
-      const response = await fetch(
-        "https://server-mct-news.onrender.com/api/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const response = await fetch("http://localhost:4000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
       const data = await response.json();
 
       if (data?.token) {
@@ -44,6 +43,8 @@ const Login = () => {
       // API'ye başarılı bir şekilde gönderildiğinde yapılacak işlemler
     } catch (error) {
       console.error("API hatası:", error);
+    } finally {
+      setIsLoadingLoginButton(false);
     }
   };
 
@@ -142,6 +143,7 @@ const Login = () => {
           }}
           type="primary"
           className="login-submit-btn"
+          loading={isLoadingLoginButton}
         >
           Login
         </Button>
